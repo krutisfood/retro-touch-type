@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <style>
+    canvas {
+        padding: 0;
+        margin: auto;
+        display: block;
+        width: 800px;
+        height: 600px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+  </style>
+</head>
+
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<script>
+  var bombY = 10;
+  var bombSpeed = 4;
+  var bombTarget = 'f';
+  var projectileLive = false;
+  var projectileY;
+  var projectileX;
+  var projectileSpeed = 8;
+  var level = 6;
+  var targetIndex;
+
+  // This is in order of which level they appear
+  var keys = ['f','j','d','k','s','l','a',';','g','h','3','8','e','i','x',','];
+
+  // Where they sit on the keyboard
+  var keyMap = {
+    'f': {'col':3,'row':2},
+    'j': {'col':6,'row':2},
+    'd': {'col':2,'row':2},
+    'k': {'col':7,'row':2},
+    's': {'col':1,'row':2},
+    'l': {'col':8,'row':2},
+    'a': {'col':0,'row':2},
+    ';': {'col':9,'row':2},
+    'g': {'col':4,'row':2},
+    'h': {'col':5,'row':2},
+    '3': {'col':3,'row':0},
+    '8': {'col':8,'row':0},
+    'e': {'col':3,'row':1},
+    'i': {'col':7,'row':2},
+    'x': {'col':1,'row':3},
+    ',': {'col':7,'row':3}
+  };
+
+  function updateKeyPress(evt) {
+    console.log("KeyCode: " + evt.keyCode);
+    if(projectileLive == false) {
+      projectileY = 500;
+      projectileX = 380;
+      projectileLive = true;
+    }
+  }
+
+  window.onload = function() {
+    canvas = document.getElementById('gameCanvas');
+    canvasContext = canvas.getContext('2d');
+
+    var framesPerSecond = 30;
+    setInterval(updateAll, 1000/framesPerSecond);
+
+    // canvas.addEventListener('mousemove', updateMousePos);
+    window.addEventListener('keydown', updateKeyPress, false);
+
+    // brickReset();
+  }
+
+  function updateAll() {
+    moveAll();
+    drawAll();
+  }
+
+  function moveAll() {
+    // Placeholder
+    bombY += bombSpeed;
+    if(projectileLive) {
+      projectileY -= projectileSpeed;
+    }
+  }
+
+  function drawAll() {
+    colorRect(0, 0, canvas.width, canvas.height, 'black'); // clear screen
+
+    if (!targetIndex)
+      targetIndex = Math.floor(Math.random() * noKeysInPlay());
+
+    console.log(targetIndex);
+    var targetKey = keys[targetIndex];
+    var targetX = xForKey(targetKey);
+    console.log("Aiming at " + targetKey);
+    colorText('#', targetX, bombY, 'white'); // draw bomb
+
+    // draw projectile
+    console.log("Target x is " + projectileX + "," + projectileY);
+    colorText('|', projectileX, projectileY, 'white');
+
+    drawKeys();
+  }
+
+  function noKeysInPlay() {
+    return level * 2;
+  }
+
+  function drawKeys() {
+    for (var i = 0; i < noKeysInPlay() - 1; i++) {
+      var key = keys[i];
+      var keyX = xForKey(key);
+      var keyY = yForKey(key);
+
+      colorText(keys[i], keyX, keyY, 'white'); // draw keys
+    }
+  }
+
+  // KRUT pass in key or row/col?
+  function yForKey(key) {
+    const ROW_MARGIN = 400;
+    const ROW_GAP = 40;
+
+    return keyMap[key].row * ROW_GAP + ROW_MARGIN;
+  }
+
+  function xForKey(key) {
+    const COL_MARGIN = 50;
+    const COL_GAP = 70;
+    const OFFSET = 25;
+
+    return keyMap[key].col * COL_GAP + COL_MARGIN + (OFFSET * keyMap[key].row);
+  }
+
+  function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
+    canvasContext.fillStyle = fillColor;
+    canvasContext.fillRect(topLeftX, topLeftY, boxWidth, boxHeight);
+  }
+
+  function colorCircle(centerX, centerY, radius, fillColor) {
+    canvasContext.fillStyle = fillColor;
+    canvasContext.beginPath();
+    canvasContext.arc(centerX, centerY, radius, 0, Math.PI*2, true);
+    canvasContext.fill();
+  }
+
+  function colorText(showWords, textX, textY, fillColor) {
+    canvasContext.fillStyle = fillColor;
+    canvasContext.font="16px Arial";
+    canvasContext.fillText(showWords, textX, textY);
+  }
+</script>
+</body>
+</html>
