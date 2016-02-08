@@ -30,7 +30,8 @@
   var projectileX;
   var projectileSpeed = 8;
   var level = 6;
-  var targetIndex;
+  var targetKeyIndex;
+  var livesLeft = 3;
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h','3','8','e','i','x',','];
@@ -83,27 +84,58 @@
   }
 
   function moveAll() {
-    // Placeholder
-    bombY += bombSpeed;
+    moveBomb();
+
     if(projectileLive) {
       projectileY -= projectileSpeed;
     }
+
+    projectileLetterHandling();
+  }
+
+  function moveBomb() {
+    // Placeholder
+    bombY += bombSpeed;
+    if (projectileY <= bombY) {
+      console.log("You shot me!");
+    }
+  }
+
+  function projectileLetterHandling() {
+    if (targetKeyIndex) {
+      var targetKey = keys[targetKeyIndex];
+      var targetKeyY = yForKey(targetKey);
+      console.log("For key " + targetKey + ", Is " + bombY + " >= " + targetKeyY);
+      if (bombY >= targetKeyY) {
+        console.log("Hit!");
+        livesLeft -= 1;
+        targetKeyIndex = false;
+        dropBomb();
+      }
+    }
+  }
+
+  function dropBomb() {
+    if (!targetKeyIndex) {
+      bombY = 0;
+      targetKeyIndex = Math.floor(Math.random() * noKeysInPlay());
+    }
+    console.log(targetKeyIndex);
+    var targetKey = keys[targetKeyIndex];
+    var targetKeyX = xForKey(targetKey);
+    console.log("Aiming at " + targetKey);
+    colorText('#', targetKeyX, bombY, 'white'); // draw bomb
   }
 
   function drawAll() {
     colorRect(0, 0, canvas.width, canvas.height, 'black'); // clear screen
 
-    if (!targetIndex)
-      targetIndex = Math.floor(Math.random() * noKeysInPlay());
+    colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
 
-    console.log(targetIndex);
-    var targetKey = keys[targetIndex];
-    var targetX = xForKey(targetKey);
-    console.log("Aiming at " + targetKey);
-    colorText('#', targetX, bombY, 'white'); // draw bomb
+    dropBomb();
 
     // draw projectile
-    console.log("Target x is " + projectileX + "," + projectileY);
+    console.log("Projectile x is " + projectileX + "," + projectileY);
     colorText('|', projectileX, projectileY, 'white');
 
     drawKeys();
