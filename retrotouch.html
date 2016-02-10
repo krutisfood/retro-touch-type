@@ -22,7 +22,8 @@
 <body>
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 <script>
-  var bombY = 10;
+  var bombY;
+  var bombX;
   var bombSpeed = 4;
   var bombTarget = 'f';
   var projectileLive = false;
@@ -46,24 +47,33 @@
   // Where they sit on the keyboard is generated
   var keyMap = {};
 
+  function debug(message) {
+    // console.log(message);
+  }
+
   function generateKeyMap() {
-    console.log("generating key map with keyboard " + keyboard);
+    debug("generating key map with keyboard " + keyboard);
     for(var i = 0; i < keyboard.length; i++) {
       var keyboardRow = keyboard[i];
-      console.log("got the keyboardRow " + keyboardRow);
+      debug("got the keyboardRow " + keyboardRow);
       for(var j = 0; j < keyboardRow.length; j++) {
         var key = keyboardRow[j];
+        console.log("Adding key " + key + " at " + i + "," + j);
         keyMap[key] = {'col': j, 'row': i};
       }
     }
   }
 
   function updateKeyPress(evt) {
-    var keypressed = String.fromCharCode(evt.keyCode).toLowerCase();
-    alert("KeyCode: " + evt.keyCode + ", key " + keypressed);
-    if(projectileLive == false) {
-      projectileY = 500;
-      projectileX = 380;
+    var keypressedChar = String.fromCharCode(evt.which).toLowerCase();
+    console.log("Key pressed thing is " + keypressedChar);
+    // var keypressedChar = String.fromCharCode(evt.keyCode).toLowerCase();
+    var x = xForKey(keypressedChar);
+    var y = yForKey(keypressedChar);
+    // alert("KeyCode: " + evt.keyCode + ", key " + keypressedChar + ", x " + x);
+    if (projectileLive == false) {
+      projectileY = y;
+      projectileX = x;
       projectileLive = true;
     }
   }
@@ -90,18 +100,37 @@
   function moveAll() {
     moveBomb();
 
-    if(projectileLive) {
-      projectileY -= projectileSpeed;
-    }
+    moveProjectile();
+
+    projectileBombHandling();
 
     projectileLetterHandling();
+  }
+
+  function projectileBombHandling() {
+    // console.log("Checking bullet at " + projectileX + "," + projectileY + " vs " + bombX + "," + bombY);
+    // projectile gets less, bomb gets more
+    if ((projectileY < bombY) && (projectileX == bombX)) {
+      console.log("Bullseye!");
+      projectileLive = false;
+      targetKeyIndex = false;
+    }
+  }
+
+  function moveProjectile() {
+    if (projectileLive) {
+      projectileY -= projectileSpeed;
+      if (projectileY < 0) {
+        projectileLive = false;
+      }
+    }
   }
 
   function moveBomb() {
     // Placeholder
     bombY += bombSpeed;
     if (projectileY <= bombY) {
-      console.log("You shot me!");
+      debug("You shot me!");
     }
   }
 
@@ -109,9 +138,9 @@
     if (targetKeyIndex) {
       var targetKey = keys[targetKeyIndex];
       var targetKeyY = yForKey(targetKey);
-      console.log("For key " + targetKey + ", Is " + bombY + " >= " + targetKeyY);
+      debug("For key " + targetKey + ", Is " + bombY + " >= " + targetKeyY);
       if (bombY >= targetKeyY) {
-        console.log("Hit!");
+        debug("Hit!");
         livesLeft -= 1;
         targetKeyIndex = false;
         dropBomb();
@@ -124,11 +153,13 @@
       bombY = 0;
       targetKeyIndex = Math.floor(Math.random() * noKeysInPlay());
     }
-    console.log(targetKeyIndex);
-    var targetKey = keys[targetKeyIndex];
-    var targetKeyX = xForKey(targetKey);
-    console.log("Aiming at " + targetKey);
-    colorText('#', targetKeyX, bombY, 'white'); // draw bomb
+    else {
+      debug(targetKeyIndex);
+      var targetKey = keys[targetKeyIndex];
+      bombX = xForKey(targetKey);
+      debug("Aiming at " + targetKey);
+      colorText('#', bombX, bombY, 'white'); // draw bomb
+    }
   }
 
   function drawAll() {
@@ -139,7 +170,7 @@
     dropBomb();
 
     // draw projectile
-    console.log("Projectile x is " + projectileX + "," + projectileY);
+    debug("Projectile x is " + projectileX + "," + projectileY);
     colorText('|', projectileX, projectileY, 'white');
 
     drawKeys();
@@ -159,7 +190,6 @@
     }
   }
 
-  // KRUT pass in key or row/col?
   function yForKey(key) {
     const ROW_MARGIN = 400;
     const ROW_GAP = 40;
