@@ -65,9 +65,13 @@
   }
 
   function updateKeyPress(evt) {
-    var keypressedChar = String.fromCharCode(evt.which).toLowerCase();
-    console.log("Key pressed thing is " + keypressedChar);
-    // var keypressedChar = String.fromCharCode(evt.keyCode).toLowerCase();
+    var keysNotMappingProperly = {
+      186 : ';',
+      188 : ',',
+      190 : '.'
+    };
+    var keypressedChar = keysNotMappingProperly[evt.which] || String.fromCharCode(evt.which).toLowerCase();
+    console.log("Key code " + evt.which + " is " + keypressedChar);
     var x = xForKey(keypressedChar);
     var y = yForKey(keypressedChar);
     // alert("KeyCode: " + evt.keyCode + ", key " + keypressedChar + ", x " + x);
