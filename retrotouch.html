@@ -78,12 +78,9 @@
     };
     var keypressedChar = keysNotMappingProperly[evt.which] || String.fromCharCode(evt.which).toLowerCase();
     debug("Key code " + evt.which + " is " + keypressedChar);
-    var x = xForKey(keypressedChar);
-    var y = yForKey(keypressedChar);
-    // alert("KeyCode: " + evt.keyCode + ", key " + keypressedChar + ", x " + x);
     if (projectileLive == false) {
-      projectileY = y;
-      projectileX = x;
+      projectileY = yForKey(keypressedChar);
+      projectileX = xForKey(keypressedChar);
       projectileLive = true;
     }
   }
@@ -103,8 +100,12 @@
   }
 
   function updateAll() {
-    moveAll();
-    drawAll();
+    if (livesLeft <= 0) {
+      gameOver();
+    } else {
+      moveAll();
+      drawAll();
+    }
   }
 
   function moveAll() {
@@ -115,6 +116,11 @@
     projectileBombHandling();
 
     projectileLetterHandling();
+  }
+
+  function gameOver() {
+    colorText('GAME OVER', 280, 300, 'white',40);
+    info("Game over");
   }
 
   function projectileBombHandling() {
@@ -171,9 +177,8 @@
       bombsAway = true;
       var targetKey = keys[targetKeyIndex];
       bombX = xForKey(targetKey);
-      info(randy + "," + targetKeyIndex);
     } else {
-      debug("Aiming at " + targetKey);
+      debug("Aiming at " + targetKeyIndex);
       colorText('#', bombX, bombY, 'white'); // draw bomb
     }
   }
@@ -237,9 +242,14 @@
     canvasContext.fill();
   }
 
-  function colorText(showWords, textX, textY, fillColor) {
+  function colorText(showWords, textX, textY, fillColor, size) {
+    if (!size) {
+      canvasContext.font="16px Arial";
+    } else {
+      canvasContext.font=size + "px Arial";
+    }
+
     canvasContext.fillStyle = fillColor;
-    canvasContext.font="16px Arial";
     canvasContext.fillText(showWords, textX, textY);
   }
 </script>
