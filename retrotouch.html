@@ -30,9 +30,11 @@
   var projectileY;
   var projectileX;
   var projectileSpeed = 8;
-  var level = 10;
+  var level = 1;
   var targetKeyIndex;
+  var bombsAway = false;
   var livesLeft = 3;
+  var hitsThisLevel = 0;
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h',
@@ -47,8 +49,12 @@
   // Where they sit on the keyboard is generated
   var keyMap = {};
 
+  function info(message) {
+    console.log("INFO: " + message);
+  }
+
   function debug(message) {
-    // console.log(message);
+    // console.log("DEBUG: " + message);
   }
 
   function generateKeyMap() {
@@ -58,7 +64,7 @@
       debug("got the keyboardRow " + keyboardRow);
       for(var j = 0; j < keyboardRow.length; j++) {
         var key = keyboardRow[j];
-        console.log("Adding key " + key + " at " + i + "," + j);
+        debug("Adding key " + key + " at " + i + "," + j);
         keyMap[key] = {'col': j, 'row': i};
       }
     }
@@ -71,7 +77,7 @@
       190 : '.'
     };
     var keypressedChar = keysNotMappingProperly[evt.which] || String.fromCharCode(evt.which).toLowerCase();
-    console.log("Key code " + evt.which + " is " + keypressedChar);
+    debug("Key code " + evt.which + " is " + keypressedChar);
     var x = xForKey(keypressedChar);
     var y = yForKey(keypressedChar);
     // alert("KeyCode: " + evt.keyCode + ", key " + keypressedChar + ", x " + x);
@@ -115,9 +121,14 @@
     // console.log("Checking bullet at " + projectileX + "," + projectileY + " vs " + bombX + "," + bombY);
     // projectile gets less, bomb gets more
     if ((projectileY < bombY) && (projectileX == bombX)) {
-      console.log("Bullseye!");
+      debug("Bullseye!");
+      hitsThisLevel++;
+      if(hitsThisLevel >= 3) {
+        level++;
+        hitsThisLevel = 0;
+      }
       projectileLive = false;
-      targetKeyIndex = false;
+      bombsAway = false;
     }
   }
 
@@ -139,28 +150,29 @@
   }
 
   function projectileLetterHandling() {
-    if (targetKeyIndex) {
+    if (bombsAway) {
       var targetKey = keys[targetKeyIndex];
       var targetKeyY = yForKey(targetKey);
       debug("For key " + targetKey + ", Is " + bombY + " >= " + targetKeyY);
       if (bombY >= targetKeyY) {
         debug("Hit!");
         livesLeft -= 1;
-        targetKeyIndex = false;
+        bombsAway = false;
         dropBomb();
       }
     }
   }
 
   function dropBomb() {
-    if (!targetKeyIndex) {
+    if (!bombsAway) {
       bombY = 0;
-      targetKeyIndex = Math.floor(Math.random() * noKeysInPlay());
-    }
-    else {
-      debug(targetKeyIndex);
+      var randy = Math.random() * noKeysInPlay();
+      targetKeyIndex = Math.floor(randy);
+      bombsAway = true;
       var targetKey = keys[targetKeyIndex];
       bombX = xForKey(targetKey);
+      info(randy + "," + targetKeyIndex);
+    } else {
       debug("Aiming at " + targetKey);
       colorText('#', bombX, bombY, 'white'); // draw bomb
     }
@@ -170,12 +182,15 @@
     colorRect(0, 0, canvas.width, canvas.height, 'black'); // clear screen
 
     colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
+    colorText("Score: " + hitsThisLevel, 20, 50, 'white'); // draw bomb
 
     dropBomb();
 
     // draw projectile
     debug("Projectile x is " + projectileX + "," + projectileY);
-    colorText('|', projectileX, projectileY, 'white');
+    if (projectileLive) {
+      colorText('|', projectileX, projectileY, 'white');
+    }
 
     drawKeys();
   }
@@ -185,11 +200,12 @@
   }
 
   function drawKeys() {
-    for (var i = 0; i < noKeysInPlay() - 1; i++) {
+    for (var i = 0; i < noKeysInPlay(); i++) {
       var key = keys[i];
       var keyX = xForKey(key);
       var keyY = yForKey(key);
 
+      debug("For index " + i + " drawing key " + key + " at " + keyX + "," + keyY);
       colorText(keys[i], keyX, keyY, 'white'); // draw keys
     }
   }
