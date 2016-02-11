@@ -120,6 +120,7 @@
 
   function gameOver() {
     colorText('GAME OVER', 280, 300, 'white',40);
+    colorText('Refresh page to start again.', 300, 340, 'white');
     info("Game over");
   }
 
@@ -244,7 +245,7 @@
 
   function colorText(showWords, textX, textY, fillColor, size) {
     if (!size) {
-      canvasContext.font="16px Arial";
+      canvasContext.font="20px Arial";
     } else {
       canvasContext.font=size + "px Arial";
     }
