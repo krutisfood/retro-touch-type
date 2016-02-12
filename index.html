@@ -79,9 +79,11 @@
     var keypressedChar = keysNotMappingProperly[evt.which] || String.fromCharCode(evt.which).toLowerCase();
     debug("Key code " + evt.which + " is " + keypressedChar);
     if (projectileLive == false) {
-      projectileY = yForKey(keypressedChar);
-      projectileX = xForKey(keypressedChar);
-      projectileLive = true;
+      if (keys.indexOf(keypressedChar) < noKeysInPlay()) {
+        projectileY = yForKey(keypressedChar);
+        projectileX = xForKey(keypressedChar);
+        projectileLive = true;
+      }
     }
   }
 
