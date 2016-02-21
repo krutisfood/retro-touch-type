@@ -125,7 +125,7 @@
 
   function gameOver() {
     colorText('GAME OVER', 280, 300, 'white',40);
-    colorText('Refresh page to start again.', 300, 340, 'white');
+    colorText('Refresh page to start again.', 280, 340, 'white');
     info("Game over");
   }
 
@@ -194,7 +194,6 @@
     colorRect(0, 0, canvas.width, canvas.height, 'black'); // clear screen
 
     colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
-    colorText("Score: " + hitsThisLevel, 20, 50, 'white'); // draw bomb
 
     dropBomb();
 
