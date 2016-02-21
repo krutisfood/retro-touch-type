@@ -74,13 +74,7 @@
   }
 
   function updateKeyPress(evt) {
-    var keysNotMappingProperly = {
-      186 : ';',
-      188 : ',',
-      190 : '.'
-    };
-    var keypressedChar = keysNotMappingProperly[evt.which] || String.fromCharCode(evt.which).toLowerCase();
-    debug("Key code " + evt.which + " is " + keypressedChar);
+    var keypressedChar = charFor(evt.which);
     if (projectileLive == false) {
       if (keys.indexOf(keypressedChar) < noKeysInPlay()) {
         projectileY = yForKey(keypressedChar);
@@ -88,6 +82,17 @@
         projectileLive = true;
       }
     }
+  }
+
+  function charFor(which) {
+    var keysNotMappingProperly = {
+      186 : ';',
+      188 : ',',
+      190 : '.'
+    };
+    var keypressedChar = keysNotMappingProperly[which] || String.fromCharCode(which).toLowerCase();
+    debug("Key code " + which + " is " + keypressedChar);
+    return keypressedChar;
   }
 
   window.onload = function() {
@@ -98,19 +103,64 @@
     var framesPerSecond = 30;
     setInterval(updateAll, 1000/framesPerSecond);
 
-    // canvas.addEventListener('mousemove', updateMousePos);
     window.addEventListener('keydown', updateKeyPress, false);
-
-    // brickReset();
   }
 
   function updateAll() {
     if (livesLeft <= 0) {
       gameOver();
     } else {
-      moveAll();
-      drawAll();
+      /* if bridgeLevel
+       *   figure out passage
+       *   catch keys & remove one if matches next key
+       *   delete keys off end
+       */
+      var bridgeLevel = false;
+      if (bridgeLevel) {
+        moveAllBridge();
+        drawAllBridge();
+      } else {
+        moveAll();
+        drawAll();
+      }
     }
+  }
+
+  function bridgeText() {
+    return "aaa ;;; sss lll ddd kkk fff jjj " +
+      "aa ss dd ff aa ss dd ff " +
+      ";; ll kk jj ;; ll kk jj " +
+      "ad ad as as ask ask ad ad as as ask ask " +
+      ";;; lll kkk jjj ;;; lll kkk jjj " +
+      "add add fad fad jak jak sad sad fall fall jak jak " +
+      "add fad; add fad; add jak; add jak; sad fall; sad fall; " +
+      "a a as as fad fad dad dad ;; ;; ja ja ka ka la la " +
+      "jas jas kas kas las las jas jas kas kas las las jas jas " +
+      "jf kd ls ;a jf kd ls ;a jf kd ls ;a jf kd ls ;a " +
+      "fall fall sad sad all all all sad falls; all sad falls; " +
+      "lad lad asks asks sas sas kass kass " +
+      "lad asks sas kass; lad asks sas kass; " +
+      "a a sad sad dad dad fall fall; a sad dad fall; " +
+      "dad dad sad sad kad kad lad lad " +
+      "dad dad; sad sad; kad kad; lad lad; " +
+      "lad; dad; sad; lass; lad; dad; sad; lass; " +
+      "fad fad; ads ads; all all; fad ads all lads; " +
+      "ask a lad; a fall ad; ask a dad; " +
+      "as a lad; as a dad; as a sad lass;  ";
+  }
+
+  function drawAllBridge() {
+    drawCanvas();
+
+    var bridgeLines = bridgeText().match(/.{1,80}/g);
+    var lineY = 200;
+    for (var i = 0; i < bridgeLines.length; i++) {
+      colorText(bridgeLines[i], 30, lineY, 'white');
+      lineY += 25;
+    }
+  }
+
+  function moveAllBridge() {
   }
 
   function moveAll() {
@@ -190,8 +240,12 @@
     }
   }
 
-  function drawAll() {
+  function drawCanvas() {
     colorRect(0, 0, canvas.width, canvas.height, 'black'); // clear screen
+  }
+
+  function drawAll() {
+    drawCanvas();
 
     // colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
     if (livesLeft >= 1)
