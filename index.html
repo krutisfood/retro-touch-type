@@ -193,7 +193,13 @@
   function drawAll() {
     colorRect(0, 0, canvas.width, canvas.height, 'black'); // clear screen
 
-    colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
+    // colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
+    if (livesLeft >= 1)
+      colorText('\u2764', 20, 30, 'white'); // draw bomb
+    if (livesLeft >= 2)
+      colorText('\u2764', 40, 30, 'white'); // draw bomb
+    if (livesLeft >= 3)
+      colorText('\u2764', 60, 30, 'white'); // draw bomb
 
     dropBomb();
 
