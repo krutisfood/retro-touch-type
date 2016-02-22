@@ -153,7 +153,7 @@
   function drawAllBridge() {
     drawCanvas();
 
-    var bridgeLines = bridgeText().match(/.{1,80}/g);
+    var bridgeLines = bridgeText().match(/.{1,60}/g);
     var lineY = 200;
     for (var i = 0; i < bridgeLines.length; i++) {
       colorText(bridgeLines[i], 30, lineY, 'white');
@@ -176,7 +176,7 @@
 
   function gameOver() {
     colorText('GAME OVER', 280, 300, 'white',40);
-    colorText('Refresh page to start again.', 280, 340, 'white');
+    colorText('Refresh page to start again.', 235, 340, 'white');
     info("Game over");
   }
 
@@ -331,7 +331,7 @@
 
   function colorText(showWords, textX, textY, fillColor, size) {
     if (!size) {
-      canvasContext.font="20px Arial";
+      canvasContext.font="20px Courier New";
     } else {
       canvasContext.font=size + "px Arial";
     }
