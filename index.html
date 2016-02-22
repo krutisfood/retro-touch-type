@@ -132,6 +132,7 @@
       ";; ll kk jj ;; ll kk jj " +
       "ad ad as as ask ask ad ad as as ask ask " +
       ";;; lll kkk jjj ;;; lll kkk jjj " +
+      ";;; lll kkk jjj ;;; lll kkk jjj " +
       "add add fad fad jak jak sad sad fall fall jak jak " +
       "add fad; add fad; add jak; add jak; sad fall; sad fall; " +
       "a a as as fad fad dad dad ;; ;; ja ja ka ka la la " +
@@ -180,8 +181,7 @@
   }
 
   function projectileBombHandling() {
-    // console.log("Checking bullet at " + projectileX + "," + projectileY + " vs " + bombX + "," + bombY);
-    // projectile gets less, bomb gets more
+    // projectile gets less going up, bomb gets more going down
     if ((projectileY < bombY) && (projectileX == bombX)) {
       debug("Bullseye!");
       hitsThisLevel++;
@@ -204,7 +204,6 @@
   }
 
   function moveBomb() {
-    // Placeholder
     bombY += bombSpeed;
     if (projectileY <= bombY) {
       debug("You bombed me!");
