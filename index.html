@@ -49,6 +49,9 @@
         ['a','s','d','f','g','h','j','k','l',';','\''],
         ['z','x','c','v','b','n','m',',','.','\/']];
 
+  // Stores the text for bridge level
+  var bridgeText;
+
   // Where they sit on the keyboard is generated
   var keyMap = {};
 
@@ -73,13 +76,23 @@
     }
   }
 
+  String.prototype.replaceAt=function(index, character) {
+    return this.substr(0, index) + character + this.substr(index+character.length);
+  }
+
   function updateKeyPress(evt) {
     var keypressedChar = charFor(evt.which);
-    if (projectileLive == false) {
-      if (keys.indexOf(keypressedChar) < noKeysInPlay()) {
-        projectileY = yForKey(keypressedChar);
-        projectileX = xForKey(keypressedChar);
-        projectileLive = true;
+    if (isBridgeLevel()) {
+      var indexOfNextChar = bridgeText.search(/\S/);
+      info("Trying to remove char at " + indexOfNextChar);
+      bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
+    } else {
+      if (projectileLive == false) {
+        if (keys.indexOf(keypressedChar) < noKeysInPlay()) {
+          projectileY = yForKey(keypressedChar);
+          projectileX = xForKey(keypressedChar);
+          projectileLive = true;
+        }
       }
     }
   }
@@ -110,13 +123,7 @@
     if (livesLeft <= 0) {
       gameOver();
     } else {
-      /* if bridgeLevel
-       *   figure out passage
-       *   catch keys & remove one if matches next key
-       *   delete keys off end
-       */
-      var bridgeLevel = false;
-      if (bridgeLevel) {
+      if (isBridgeLevel()) {
         moveAllBridge();
         drawAllBridge();
       } else {
@@ -126,7 +133,12 @@
     }
   }
 
-  function bridgeText() {
+  function isBridgeLevel() {
+    return false;
+  }
+
+  function getBridgeText() {
+    if (bridgeText) return bridgeText;
     return "aaa ;;; sss lll ddd kkk fff jjj " +
       "aa ss dd ff aa ss dd ff " +
       ";; ll kk jj ;; ll kk jj " +
@@ -153,7 +165,8 @@
   function drawAllBridge() {
     drawCanvas();
 
-    var bridgeLines = bridgeText().match(/.{1,60}/g);
+    bridgeText = getBridgeText();
+    var bridgeLines = bridgeText.match(/.{1,60}/g);
     var lineY = 200;
     for (var i = 0; i < bridgeLines.length; i++) {
       colorText(bridgeLines[i], 30, lineY, 'white');
