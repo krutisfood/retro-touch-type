@@ -20,8 +20,32 @@
 </head>
 
 <body>
+<script src="jsfx.js"></script>
+<script>
+var library = {
+    "pewpew":{
+        "Frequency": {"Start":1100.0445498526096,"Min":0.09264093050733209,"Slide":-0.5299713624175639},
+        "Generator":{"Func":"sine","A":0.2510009810794145,"ASlide":0.020514403143897655},
+        "Filter":{"HP":0.1695386455161497},"Volume":{"Sustain":0.1978937237057835,"Decay":0.0017689055763185026}
+    },
+    "destroyed":{
+        "Frequency":{"Start":385.3802798874676,"Slide":-0.6181004933081568},
+        "Generator":{"Func":"square","A":0.11476959167048334,"ASlide":-0.29058131389319897},
+        "Filter":{"HP":0.21182643806096166},"Volume":{"Sustain":0.08737127098720521,"Decay":0.23490780140273274}
+    },
+    "hit":{
+        "Frequency":{"Start":361.2735885940492,"Slide":-0.6045785060152411},
+        "Generator":{"Func":"saw","A":0.29831282976083456,"ASlide":-0.31553542031906545},
+        "Filter":{"HP":0.058810981130227445},"Volume":{"Sustain":0.03811421436257661,"Decay":0.2474651860073209}
+    }
+};
+var sfx = jsfx.Live(library);
+</script>
+<button onclick="mute()">Mute</button>
+
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 <script>
+  var sound = jsfx.Live(library);
   var bombY;
   var bombX;
   var bombSpeed = 4;
@@ -101,18 +125,23 @@
           bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
           indexOfNextChar++;
         }
-      } else {
-        info("Borp!");
       }
     } else {
       if (projectileLive == false) {
-        if (keys.indexOf(keypressedChar) < noKeysInPlay()) {
-          projectileY = yForKey(keypressedChar);
-          projectileX = xForKey(keypressedChar);
-          projectileLive = true;
+        var indexOfKeyPressed = keys.indexOf(keypressedChar);
+        if ((indexOfKeyPressed >= 0) && (indexOfKeyPressed < noKeysInPlay())) {
+          shootAt(keypressedChar);
         }
       }
     }
+  }
+
+  function shootAt(key) {
+    sound.pewpew();
+    info("Getting co-ords for \'" + key + "\'.");
+    projectileY = yForKey(key);
+    projectileX = xForKey(key);
+    projectileLive = true;
   }
 
   function finishedBridgeLevel() {
@@ -129,7 +158,7 @@
       190 : '.'
     };
     var keypressedChar = keysNotMappingProperly[which] || String.fromCharCode(which).toLowerCase();
-    debug("Key code " + which + " is " + keypressedChar);
+    info("Key code " + which + " is " + keypressedChar);
     return keypressedChar;
   }
 
@@ -150,9 +179,8 @@
     } else {
       drawCanvas();
       if (paused) {
-        colorText('Start with index fingers on \'f\' and \'j\'', 160, 240, 'white');
-        colorText('Paused', 320, 300, 'white',40);
-        colorText('Press any key to continue...', 200, 340, 'white');
+        colorText('Start with your index fingers on \'f\' and \'j\'', 160, 240, 'white');
+        drawPaused();
       } else if (isBridgeLevel()) {
         moveAllBridge();
         drawAllBridge();
@@ -161,6 +189,11 @@
         drawAll();
       }
     }
+  }
+
+  function drawPaused() {
+    // colorText('Paused', 320, 340, 'white',40);
+    colorText('Press any key to continue...', 220, 360, 'white');
   }
 
   function isBridgeLevel() {
@@ -209,6 +242,7 @@
   }
 
   function moveAllBridge() {
+    // this where keys get eaten?
   }
 
   function moveAll() {
@@ -225,12 +259,15 @@
     colorText('GAME OVER', 280, 300, 'white',40);
     colorText('Refresh page to start again.', 235, 340, 'white');
     info("Game over");
+    // paused = true;
+    // livesLeft = 3;
   }
 
   function projectileBombHandling() {
     // projectile gets less going up, bomb gets more going down
-    if ((projectileY < bombY) && (projectileX == bombX)) {
-      debug("Bullseye!");
+    if (projectileLive && (projectileY < bombY) && (projectileX == bombX)) {
+      sound.hit();
+      info("Bullseye!");
       hitsThisLevel++;
       if(hitsThisLevel >= HITS_PER_LEVEL) {
         if (level % 4 == 0)
@@ -259,9 +296,6 @@
 
   function moveBomb() {
     bombY += bombSpeed;
-    if (projectileY <= bombY) {
-      debug("You bombed me!");
-    }
   }
 
   function projectileLetterHandling() {
@@ -270,6 +304,7 @@
       var targetKeyY = yForKey(targetKey);
       debug("For key " + targetKey + ", Is " + bombY + " >= " + targetKeyY);
       if (bombY >= targetKeyY) {
+        sound.destroyed();
         debug("Letter destroyed!");
         livesLeft -= 1;
         bombsAway = false;
