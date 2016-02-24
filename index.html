@@ -40,6 +40,8 @@
   var indexOfNextChar = 0;
   var bridgeLevel = false;
   const CHARS_IN_BRIDGE_LEVEL = 20;
+  const HITS_PER_LEVEL = 6;
+  var paused = true;
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h',
@@ -85,6 +87,10 @@
 
   function updateKeyPress(evt) {
     var keypressedChar = charFor(evt.which);
+    if (paused) {
+      paused = false;
+      return;
+    }
     if (isBridgeLevel()) {
       var nextChar = bridgeText.charAt(indexOfNextChar);
       debug("Trying to remove char at " + indexOfNextChar + " which is " + nextChar);
@@ -142,7 +148,12 @@
     if (livesLeft <= 0) {
       gameOver();
     } else {
-      if (isBridgeLevel()) {
+      drawCanvas();
+      if (paused) {
+        colorText('Start with index fingers on \'f\' and \'j\'', 160, 240, 'white');
+        colorText('Paused', 320, 300, 'white',40);
+        colorText('Press any key to continue...', 200, 340, 'white');
+      } else if (isBridgeLevel()) {
         moveAllBridge();
         drawAllBridge();
       } else {
@@ -187,8 +198,6 @@
   }
 
   function drawAllBridge() {
-    drawCanvas();
-
     bridgeText = getBridgeText();
     var bridgeLines = bridgeText.match(/.{1,60}/g);
     var lineY = 200;
@@ -196,6 +205,7 @@
       colorText(bridgeLines[i], 30, lineY, 'white');
       lineY += 25;
     }
+    underline(canvasContext,"blah",100,100,"white","16px","center");
   }
 
   function moveAllBridge() {
@@ -222,7 +232,7 @@
     if ((projectileY < bombY) && (projectileX == bombX)) {
       debug("Bullseye!");
       hitsThisLevel++;
-      if(hitsThisLevel >= 3) {
+      if(hitsThisLevel >= HITS_PER_LEVEL) {
         if (level % 4 == 0)
           startBridgeLevel();
         level++;
@@ -288,8 +298,6 @@
   }
 
   function drawAll() {
-    drawCanvas();
-
     // colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
     if (livesLeft >= 1)
       colorText('\u2764', 20, 30, 'white'); // draw bomb
@@ -382,6 +390,26 @@
 
     canvasContext.fillStyle = fillColor;
     canvasContext.fillText(showWords, textX, textY);
+  }
+
+  function underline(ctx, text, x, y, size, color, thickness ,offset) {
+    var width = ctx.measureText(text).width;
+
+    switch(ctx.textAlign){
+      case "center":
+      x -= (width/2); break;
+      case "right":
+      x -= width; break;
+    }
+
+    y += size+offset;
+
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = thickness;
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+width,y);
+    ctx.stroke();
   }
 </script>
 </body>
