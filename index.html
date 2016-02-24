@@ -63,7 +63,7 @@
   }
 
   function debug(message) {
-    console.log("DEBUG: " + message);
+    // console.log("DEBUG: " + message);
   }
 
   function generateKeyMap() {
@@ -91,9 +91,10 @@
       if (keypressedChar == nextChar) {
         if (indexOfNextChar >= CHARS_IN_BRIDGE_LEVEL - 1) {
           finishedBridgeLevel();
+        } else {
+          bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
+          indexOfNextChar++;
         }
-        bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
-        indexOfNextChar++;
       } else {
         info("Borp!");
       }
@@ -222,9 +223,9 @@
       debug("Bullseye!");
       hitsThisLevel++;
       if(hitsThisLevel >= 3) {
-        level++;
-        if (level % 4)
+        if (level % 4 == 0)
           startBridgeLevel();
+        level++;
         hitsThisLevel = 0;
       }
       projectileLive = false;
@@ -233,6 +234,7 @@
   }
 
   function startBridgeLevel() {
+    info("Start bridge level after level " + level);
     bridgeLevel = true;
   }
 
