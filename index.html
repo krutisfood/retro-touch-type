@@ -37,6 +37,7 @@
   var livesLeft = 3;
   var hitsThisLevel = 0;
   var sequenceIndex = 0;
+  var indexOfNextChar = 0;
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h',
@@ -60,7 +61,7 @@
   }
 
   function debug(message) {
-    // console.log("DEBUG: " + message);
+    console.log("DEBUG: " + message);
   }
 
   function generateKeyMap() {
@@ -83,9 +84,14 @@
   function updateKeyPress(evt) {
     var keypressedChar = charFor(evt.which);
     if (isBridgeLevel()) {
-      var indexOfNextChar = bridgeText.search(/\S/);
-      info("Trying to remove char at " + indexOfNextChar);
-      bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
+      var nextChar = bridgeText.charAt(indexOfNextChar);
+      debug("Trying to remove char at " + indexOfNextChar + " which is " + nextChar);
+      if (keypressedChar == nextChar) {
+        bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
+        indexOfNextChar++;
+      } else {
+        info("Borp!");
+      }
     } else {
       if (projectileLive == false) {
         if (keys.indexOf(keypressedChar) < noKeysInPlay()) {
@@ -139,7 +145,8 @@
 
   function getBridgeText() {
     if (bridgeText) return bridgeText;
-    return "aaa ;;; sss lll ddd kkk fff jjj " +
+
+    var total_text = "aaa ;;; sss lll ddd kkk fff jjj " +
       "aa ss dd ff aa ss dd ff " +
       ";; ll kk jj ;; ll kk jj " +
       "ad ad as as ask ask ad ad as as ask ask " +
@@ -160,6 +167,11 @@
       "fad fad; ads ads; all all; fad ads all lads; " +
       "ask a lad; a fall ad; ask a dad; " +
       "as a lad; as a dad; as a sad lass;  ";
+
+    const CHARS_IN_BRIDGE_LEVEL = 200;
+    var randy = Math.floor(Math.random() * (total_text.length - CHARS_IN_BRIDGE_LEVEL));
+    debug("Returning text starting at " + randy);
+    return total_text.substring(randy, randy + CHARS_IN_BRIDGE_LEVEL);
   }
 
   function drawAllBridge() {
