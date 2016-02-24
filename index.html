@@ -38,6 +38,8 @@
   var hitsThisLevel = 0;
   var sequenceIndex = 0;
   var indexOfNextChar = 0;
+  var bridgeLevel = false;
+  const CHARS_IN_BRIDGE_LEVEL = 20;
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h',
@@ -87,6 +89,9 @@
       var nextChar = bridgeText.charAt(indexOfNextChar);
       debug("Trying to remove char at " + indexOfNextChar + " which is " + nextChar);
       if (keypressedChar == nextChar) {
+        if (indexOfNextChar >= CHARS_IN_BRIDGE_LEVEL - 1) {
+          finishedBridgeLevel();
+        }
         bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
         indexOfNextChar++;
       } else {
@@ -101,6 +106,13 @@
         }
       }
     }
+  }
+
+  function finishedBridgeLevel() {
+    info("Succeed!");
+    bridgeLevel = false;
+    bridgeText = false;
+    indexOfNextChar = 0;
   }
 
   function charFor(which) {
@@ -140,7 +152,7 @@
   }
 
   function isBridgeLevel() {
-    return false;
+    return bridgeLevel;
   }
 
   function getBridgeText() {
@@ -168,7 +180,6 @@
       "ask a lad; a fall ad; ask a dad; " +
       "as a lad; as a dad; as a sad lass;  ";
 
-    const CHARS_IN_BRIDGE_LEVEL = 200;
     var randy = Math.floor(Math.random() * (total_text.length - CHARS_IN_BRIDGE_LEVEL));
     debug("Returning text starting at " + randy);
     return total_text.substring(randy, randy + CHARS_IN_BRIDGE_LEVEL);
@@ -212,11 +223,17 @@
       hitsThisLevel++;
       if(hitsThisLevel >= 3) {
         level++;
+        if (level % 2)
+          startBridgeLevel();
         hitsThisLevel = 0;
       }
       projectileLive = false;
       bombsAway = false;
     }
+  }
+
+  function startBridgeLevel() {
+    bridgeLevel = true;
   }
 
   function moveProjectile() {
