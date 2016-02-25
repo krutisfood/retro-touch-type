@@ -21,8 +21,8 @@
 
 <body>
 <div style='text-align:center'>
-<h1>Retro Touch Type</h1>
-<a href='https://github.com/krutisfood/retro-touch-type'>Source here</a>
+  <h1>Retro Touch Type</h1>
+  <a href='https://github.com/krutisfood/retro-touch-type'>Source here</a>
 </div>
 <script src="jsfx.js"></script>
 <script>
@@ -65,7 +65,7 @@ var sfx = jsfx.Live(library);
   var livesLeft = 5;
   var hitsThisLevel = 0;
   var sequenceIndex = 0;
-  var indexOfNextChar = 0;
+  var indexOfNextBridgeChar = 0;
   var bridgeLevel = false;
   const CHARS_IN_BRIDGE_LEVEL = 20;
   const HITS_PER_LEVEL = 8;
@@ -120,14 +120,14 @@ var sfx = jsfx.Live(library);
       return;
     }
     if (isBridgeLevel()) {
-      var nextChar = bridgeText.charAt(indexOfNextChar);
-      debug("Trying to remove char at " + indexOfNextChar + " which is " + nextChar);
+      var nextChar = bridgeText.charAt(indexOfNextBridgeChar);
+      debug("Trying to remove char at " + indexOfNextBridgeChar + " which is " + nextChar);
       if (keypressedChar == nextChar) {
-        if (indexOfNextChar >= CHARS_IN_BRIDGE_LEVEL - 1) {
+        if (indexOfNextBridgeChar >= CHARS_IN_BRIDGE_LEVEL - 1) {
           finishedBridgeLevel();
         } else {
-          bridgeText = bridgeText.replaceAt(indexOfNextChar, " ");
-          indexOfNextChar++;
+          bridgeText = bridgeText.replaceAt(indexOfNextBridgeChar, " ");
+          indexOfNextBridgeChar++;
         }
       }
     } else {
@@ -152,7 +152,7 @@ var sfx = jsfx.Live(library);
     info("Succeed!");
     bridgeLevel = false;
     bridgeText = false;
-    indexOfNextChar = 0;
+    indexOfNextBridgeChar = 0;
   }
 
   function charFor(which) {
@@ -238,12 +238,13 @@ var sfx = jsfx.Live(library);
     bridgeText = getBridgeText();
     var bridgeLines = bridgeText.match(/.{1,60}/g);
     var lineY = 200;
-    underline(canvasContext,"b",30,lineY,5,"white",2,"center");
+    var width = canvasContext.measureText(bridgeText.charAt(indexOfNextBridgeChar)).width;
+    var underlineX = 30 + (width * indexOfNextBridgeChar);
+    underline(canvasContext," ",underlineX,lineY,5,"white",2,"center");
     for (var i = 0; i < bridgeLines.length; i++) {
       colorText(bridgeLines[i], 30, lineY, 'white');
       lineY += 25;
     }
-    // info("Attempted underline complete");
   }
 
   function moveAllBridge() {
