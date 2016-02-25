@@ -50,6 +50,7 @@ var sfx = jsfx.Live(library);
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 <script>
   var sound = jsfx.Live(library);
+  var bridgeLevel = false;
   var bombY;
   var bombX;
   var bombSpeed = 5;
@@ -66,8 +67,7 @@ var sfx = jsfx.Live(library);
   var hitsThisLevel = 0;
   var sequenceIndex = 0;
   var indexOfNextBridgeChar = 0;
-  var bridgeLevel = false;
-  const CHARS_IN_BRIDGE_LEVEL = 20;
+  const CHARS_IN_BRIDGE_LEVEL = 80;
   const HITS_PER_LEVEL = 8;
   var paused = true;
 
@@ -238,9 +238,12 @@ var sfx = jsfx.Live(library);
     bridgeText = getBridgeText();
     var bridgeLines = bridgeText.match(/.{1,60}/g);
     var lineY = 200;
+    // This works because we're using a mono space font
     var width = canvasContext.measureText(bridgeText.charAt(indexOfNextBridgeChar)).width;
-    var underlineX = 30 + (width * indexOfNextBridgeChar);
-    underline(canvasContext," ",underlineX,lineY,5,"white",2,"center");
+    var charIndex = indexOfNextBridgeChar % 60;
+    var underlineX = 30 + (width * charIndex);
+    var underlineY = lineY + (25 * Math.floor(indexOfNextBridgeChar / 60));
+    underline(canvasContext," ",underlineX,underlineY,5,"white",2,"center");
     for (var i = 0; i < bridgeLines.length; i++) {
       colorText(bridgeLines[i], 30, lineY, 'white');
       lineY += 25;
