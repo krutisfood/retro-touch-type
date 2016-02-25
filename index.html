@@ -52,23 +52,23 @@ var sfx = jsfx.Live(library);
   var sound = jsfx.Live(library);
   var bombY;
   var bombX;
-  var bombSpeed = 4;
+  var bombSpeed = 5;
   var bombTarget = 'f';
   var projectileLive = false;
   var projectileY;
   var projectileX;
-  var projectileSpeed = 8;
+  var projectileSpeed = 10;
   var level = 1;
   var targetKeyIndex;
   var letterDestroyed = false;
   var bombsAway = false;
-  var livesLeft = 3;
+  var livesLeft = 5;
   var hitsThisLevel = 0;
   var sequenceIndex = 0;
   var indexOfNextChar = 0;
   var bridgeLevel = false;
   const CHARS_IN_BRIDGE_LEVEL = 20;
-  const HITS_PER_LEVEL = 6;
+  const HITS_PER_LEVEL = 8;
   var paused = true;
 
   // This is in order of which level they appear
@@ -238,11 +238,12 @@ var sfx = jsfx.Live(library);
     bridgeText = getBridgeText();
     var bridgeLines = bridgeText.match(/.{1,60}/g);
     var lineY = 200;
+    underline(canvasContext,"b",30,lineY,5,"white",2,"center");
     for (var i = 0; i < bridgeLines.length; i++) {
       colorText(bridgeLines[i], 30, lineY, 'white');
       lineY += 25;
     }
-    underline(canvasContext,"blah",100,100,"white","16px","center");
+    // info("Attempted underline complete");
   }
 
   function moveAllBridge() {
@@ -337,13 +338,10 @@ var sfx = jsfx.Live(library);
   }
 
   function drawAll() {
-    // colorText("Lives: " + livesLeft, 20, 30, 'white'); // draw bomb
-    if (livesLeft >= 1)
-      colorText('\u2764', 20, 30, 'white'); // draw bomb
-    if (livesLeft >= 2)
-      colorText('\u2764', 40, 30, 'white'); // draw bomb
-    if (livesLeft >= 3)
-      colorText('\u2764', 60, 30, 'white'); // draw bomb
+    for (var j = 1; j <= livesLeft; j++) {
+      var x = 20 * j;
+      colorText('\u2764', x, 30, 'white'); // draw bomb
+    }
 
     dropBomb();
 
@@ -432,17 +430,23 @@ var sfx = jsfx.Live(library);
   }
 
   function underline(ctx, text, x, y, size, color, thickness ,offset) {
+    info("Underline invoked with " + text + ", " + x + ", " + y + ", " + size + ", " + color + ", " + thickness + ", " + offset + ", " + ctx.textAlign);
     var width = ctx.measureText(text).width;
 
-    switch(ctx.textAlign){
+    switch(offset){
       case "center":
       x -= (width/2); break;
       case "right":
       x -= width; break;
+      case "left":
+      x += width; break;
     }
 
-    y += size+offset;
+    // y += size+offset;
+    info("Y is " + y + ", size is " + size);
+    y += size;
 
+    info("Drawing underline from " + x + ", " + y + " of length " + width);
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.lineWidth = thickness;
