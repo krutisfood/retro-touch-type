@@ -47,28 +47,28 @@ var sfx = jsfx.Live(library);
 </script>
 <!--<button onclick="mute()">Mute</button>-->
 
-<canvas id="gameCanvas" width="800" height="600"></canvas>
+<canvas id="gameCanvas" width="640" height="400"></canvas>
 <script>
   var sound = jsfx.Live(library);
-  var bridgeLevel = false;
+  var bridgeLevel = true;
+  var livesLeft = 5;
+  var bombSpeed = 4;
+  var projectileSpeed = 8;
+  const HITS_PER_LEVEL = 10;
   var bombY;
   var bombX;
-  var bombSpeed = 5;
   var bombTarget = 'f';
   var projectileLive = false;
   var projectileY;
   var projectileX;
-  var projectileSpeed = 10;
   var level = 1;
   var targetKeyIndex;
   var letterDestroyed = false;
   var bombsAway = false;
-  var livesLeft = 5;
   var hitsThisLevel = 0;
   var sequenceIndex = 0;
   var indexOfNextBridgeChar = 0;
   const CHARS_IN_BRIDGE_LEVEL = 80;
-  const HITS_PER_LEVEL = 8;
   var paused = true;
 
   // This is in order of which level they appear
@@ -183,7 +183,7 @@ var sfx = jsfx.Live(library);
     } else {
       drawCanvas();
       if (paused) {
-        colorText('Start with your index fingers on \'f\' and \'j\'', 160, 240, 'white');
+        colorText('Start with your index fingers on \'f\' and \'j\'', 60, 140, 'white');
         drawPaused();
       } else if (isBridgeLevel()) {
         moveAllBridge();
@@ -197,7 +197,7 @@ var sfx = jsfx.Live(library);
 
   function drawPaused() {
     // colorText('Paused', 320, 340, 'white',40);
-    colorText('Press any key to continue...', 220, 360, 'white');
+    colorText('Press any key to continue...', 120, 260, 'white');
   }
 
   function isBridgeLevel() {
@@ -235,14 +235,15 @@ var sfx = jsfx.Live(library);
   }
 
   function drawAllBridge() {
+    const CHARS_PER_LINE = 50;
     bridgeText = getBridgeText();
-    var bridgeLines = bridgeText.match(/.{1,60}/g);
+    var bridgeLines = bridgeText.match(/.{1,50}/g);
     var lineY = 200;
     // This works because we're using a mono space font
     var width = canvasContext.measureText(bridgeText.charAt(indexOfNextBridgeChar)).width;
-    var charIndex = indexOfNextBridgeChar % 60;
+    var charIndex = indexOfNextBridgeChar % CHARS_PER_LINE;
     var underlineX = 30 + (width * charIndex);
-    var underlineY = lineY + (25 * Math.floor(indexOfNextBridgeChar / 60));
+    var underlineY = lineY + (25 * Math.floor(indexOfNextBridgeChar / CHARS_PER_LINE));
     underline(canvasContext," ",underlineX,underlineY,5,"white",2,"center");
     for (var i = 0; i < bridgeLines.length; i++) {
       colorText(bridgeLines[i], 30, lineY, 'white');
@@ -265,8 +266,8 @@ var sfx = jsfx.Live(library);
   }
 
   function gameOver() {
-    colorText('GAME OVER', 280, 300, 'white',40);
-    colorText('Refresh page to start again.', 235, 340, 'white');
+    colorText('GAME OVER', 180, 160, 'white',40);
+    colorText('Refresh page to start again.', 135, 200, 'white');
     info("Game over");
     // paused = true;
     // livesLeft = 3;
@@ -396,16 +397,16 @@ var sfx = jsfx.Live(library);
   }
 
   function yForKey(key) {
-    const ROW_MARGIN = 400;
-    const ROW_GAP = 40;
+    const ROW_MARGIN = 260;
+    const ROW_GAP = 20;
 
     return keyMap[key].row * ROW_GAP + ROW_MARGIN;
   }
 
   function xForKey(key) {
-    const COL_MARGIN = 1;
-    const COL_GAP = 80;
-    const OFFSET = 20;
+    const COL_MARGIN = 0;
+    const COL_GAP = 66;
+    const OFFSET = 16;
 
     return keyMap[key].col * COL_GAP + COL_MARGIN + (OFFSET * keyMap[key].row);
   }
