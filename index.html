@@ -52,7 +52,7 @@ var sfx = jsfx.Live(library);
   var sound = jsfx.Live(library);
   var bridgeLevel = false;
   var livesLeft = 5;
-  var bombSpeed = 4;
+  var bombSpeed = 3;
   var projectileSpeed = 8;
   const HITS_PER_LEVEL = 10;
   var bombY;
@@ -425,7 +425,7 @@ var sfx = jsfx.Live(library);
 
   function colorText(showWords, textX, textY, fillColor, size) {
     if (!size) {
-      canvasContext.font="20px Courier New";
+      canvasContext.font="16px Courier New";
     } else {
       canvasContext.font=size + "px Arial";
     }
