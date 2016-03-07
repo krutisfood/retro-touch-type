@@ -84,6 +84,9 @@ var sfx = jsfx.Live(library);
 
   // Stores the text for bridge level
   var bridgeText;
+  // Counter used by the eater
+  var bridgeLevelCounter = 0;
+  var howManyBridgeLevelCharsEaten = 0;
 
   // Where they sit on the keyboard is generated
   var keyMap = {};
@@ -236,8 +239,13 @@ var sfx = jsfx.Live(library);
 
   function drawAllBridge() {
     const CHARS_PER_LINE = 50;
+    const explosionSequence = ['\\','-','/','|','\\','-','/','|'];
+    var trailingChar;
+    var explosionIndex = Math.floor(bridgeLevelCounter / 3) % explosionSequence.length;
+    trailingChar = explosionSequence[explosionIndex];
+
     bridgeText = getBridgeText();
-    var bridgeLines = bridgeText.match(/.{1,50}/g);
+    var bridgeLines = bridgeText.concat(trailingChar).match(/.{1,50}/g);
     var lineY = 200;
     // This works because we're using a mono space font
     var width = canvasContext.measureText(bridgeText.charAt(indexOfNextBridgeChar)).width;
@@ -252,7 +260,19 @@ var sfx = jsfx.Live(library);
   }
 
   function moveAllBridge() {
-    // this where keys get eaten?
+    bridgeLevelCounter++;
+    info("Updating how many eaten chars to " + howManyBridgeLevelCharsEaten);
+    debug("Update bridge level counter " + bridgeLevelCounter);
+    if (bridgeLevelCounter >= 30 * 4) {
+      debug("Hit the greater than 4 minutes threshold");
+      if((bridgeLevelCounter % 30) == 0) {
+        howManyBridgeLevelCharsEaten++;
+        bridgeText = getBridgeText().slice(0,-1);
+      }
+    }
+    if (indexOfNextBridgeChar >= (CHARS_IN_BRIDGE_LEVEL - howManyBridgeLevelCharsEaten)) {
+      finishedBridgeLevel();
+    }
   }
 
   function moveAll() {
