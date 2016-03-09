@@ -1,3 +1,8 @@
+(function(touch){
+  'use strict';
+
+  var canvas;
+  var canvasContext;
   var sound = jsfx.Live(library);
   var bridgeLevel = false;
   var livesLeft = 5;
@@ -39,6 +44,19 @@
 
   // Where they sit on the keyboard is generated
   var keyMap = {};
+
+  touch.start = function () {
+    console.log("Starting");
+    generateKeyMap();
+    canvas = document.getElementById('gameCanvas');
+    canvasContext = canvas.getContext('2d');
+  
+    var framesPerSecond = 30;
+    setInterval(updateAll, 1000/framesPerSecond);
+  
+    window.addEventListener('keydown', updateKeyPress, false);
+    console.log("End of Starting");
+  };
 
   function info(message) {
     console.log("INFO: " + message);
@@ -417,3 +435,4 @@
     ctx.lineTo(x+width,y);
     ctx.stroke();
   }
+})(this.touch = {});

@@ -45,21 +45,14 @@ var library = {
 };
 var sfx = jsfx.Live(library);
 </script>
-<!--<button onclick="mute()">Mute</button>-->
 
 <canvas id="gameCanvas" width="640" height="400"></canvas>
-<script src="touch.js"/>
+<script src="touch.js"></script>
 <script>
-  window.onload = function() {
-    generateKeyMap();
-    canvas = document.getElementById('gameCanvas');
-    canvasContext = canvas.getContext('2d');
-  
-    var framesPerSecond = 30;
-    setInterval(updateAll, 1000/framesPerSecond);
-  
-    window.addEventListener('keydown', updateKeyPress, false);
+  function load() {
+    touch.start();
   }
+  window.onload = load;
 </script>
 </body>
 </html>
