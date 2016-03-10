@@ -8,7 +8,7 @@
   var livesLeft = 3;
   var bombSpeed = 3;
   var projectileSpeed = 8;
-  const HITS_PER_LEVEL = 10;
+  const HITS_PER_LEVEL = 4;
   var bombY;
   var bombX;
   var bombTarget = 'f';
