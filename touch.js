@@ -5,7 +5,7 @@
   var canvasContext;
   var sound = jsfx.Live(library);
   var bridgeLevel = false;
-  var livesLeft = 5;
+  var livesLeft = 3;
   var bombSpeed = 3;
   var projectileSpeed = 8;
   const HITS_PER_LEVEL = 10;
