@@ -219,9 +219,9 @@
     bridgeLevelCounter++;
     info("Updating how many eaten chars to " + howManyBridgeLevelCharsEaten);
     debug("Update bridge level counter " + bridgeLevelCounter);
-    if (bridgeLevelCounter >= 30 * 4) {
+    if (bridgeLevelCounter >= 30 * 6) {
       debug("Hit the greater than 4 minutes threshold");
-      if((bridgeLevelCounter % 30) == 0) {
+      if((bridgeLevelCounter % 20) == 0) {
         howManyBridgeLevelCharsEaten++;
         bridgeText = getBridgeText().slice(0,-1);
       }
