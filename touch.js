@@ -46,7 +46,6 @@
   var keyMap = {};
 
   touch.start = function () {
-    console.log("Starting");
     generateKeyMap();
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');
@@ -55,7 +54,6 @@
     setInterval(updateAll, 1000/framesPerSecond);
   
     window.addEventListener('keydown', updateKeyPress, false);
-    console.log("End of Starting");
   };
 
   function info(message) {
@@ -142,7 +140,7 @@
     } else {
       drawCanvas();
       if (paused) {
-        colorText('Start with your index fingers on \'f\' and \'j\'', 60, 140, 'white');
+        colorText('Start with your index fingers on \'f\' and \'j\'', 80, 140, 'white');
         drawPaused();
       } else if (isBridgeLevel()) {
         moveAllBridge();
@@ -156,7 +154,7 @@
 
   function drawPaused() {
     // colorText('Paused', 320, 340, 'white',40);
-    colorText('Press any key to continue...', 120, 260, 'white');
+    colorText('Press any key to continue...', 160, 260, 'white');
   }
 
   function isBridgeLevel() {
@@ -243,7 +241,7 @@
 
   function gameOver() {
     colorText('GAME OVER', 180, 160, 'white',40);
-    colorText('Refresh page to start again.', 135, 200, 'white');
+    colorText('Refresh page to start again.', 170, 200, 'white');
     info("Game over");
     // paused = true;
     // livesLeft = 3;
