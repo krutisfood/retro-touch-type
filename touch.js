@@ -11,7 +11,6 @@
   const HITS_PER_LEVEL = 4;
   var bombY;
   var bombX;
-  var bombTarget = 'f';
   var projectileLive = false;
   var projectileY;
   var projectileX;
@@ -366,7 +365,11 @@
       if (letterDestroyed == key) {
         continue;
       }
-      colorText(keys[i], keyX, keyY, 'white'); // draw keys
+      var keyColour = 'grey';
+      if (targetKeyIndex == i) {
+        keyColour = 'white';
+      }
+      colorText(keys[i], keyX, keyY, keyColour); // draw keys
     }
   }
 
