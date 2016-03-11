@@ -89,7 +89,7 @@
     if (isBridgeLevel()) {
       var nextChar = bridgeText.charAt(indexOfNextBridgeChar);
       debug("Trying to remove char at " + indexOfNextBridgeChar + " which is " + nextChar);
-      if (keypressedChar == nextChar) {
+      if (keypressedChar === nextChar) {
         if (indexOfNextBridgeChar >= CHARS_IN_BRIDGE_LEVEL - 1) {
           finishedBridgeLevel();
         } else {
@@ -98,7 +98,7 @@
         }
       }
     } else {
-      if (projectileLive == false) {
+      if (projectileLive === false) {
         var indexOfKeyPressed = keys.indexOf(keypressedChar);
         if ((indexOfKeyPressed >= 0) && (indexOfKeyPressed < noKeysInPlay())) {
           shootAt(keypressedChar);
@@ -120,6 +120,9 @@
     bridgeLevel = false;
     bridgeText = false;
     indexOfNextBridgeChar = 0;
+    howManyBridgeLevelCharsEaten = 0;
+    bridgeLevelCounter = 0;
+    paused = true;
   }
 
   function charFor(which) {
@@ -139,7 +142,10 @@
     } else {
       drawCanvas();
       if (paused) {
-        colorText('Start with your index fingers on \'f\' and \'j\'', 80, 140, 'white');
+	if (level === 1)
+          colorText('Start with your index fingers on \'f\' and \'j\'', 80, 140, 'white');
+        else
+          colorText('Words Per Minute: ', 180, 140, 'white');
         drawPaused();
       } else if (isBridgeLevel()) {
         moveAllBridge();
@@ -152,7 +158,6 @@
   }
 
   function drawPaused() {
-    // colorText('Paused', 320, 340, 'white',40);
     colorText('Press any key to continue...', 160, 260, 'white');
   }
 
@@ -214,11 +219,11 @@
 
   function moveAllBridge() {
     bridgeLevelCounter++;
-    info("Updating how many eaten chars to " + howManyBridgeLevelCharsEaten);
     debug("Update bridge level counter " + bridgeLevelCounter);
-    if (bridgeLevelCounter >= 30 * 6) {
+    if (bridgeLevelCounter >= 30 * 10) {
       debug("Hit the greater than 4 minutes threshold");
-      if((bridgeLevelCounter % 20) == 0) {
+      if((bridgeLevelCounter % 10) === 0) {
+        debug("Updating how many eaten chars to " + howManyBridgeLevelCharsEaten);
         howManyBridgeLevelCharsEaten++;
         bridgeText = getBridgeText().slice(0,-1);
       }
@@ -248,12 +253,12 @@
 
   function projectileBombHandling() {
     // projectile gets less going up, bomb gets more going down
-    if (projectileLive && (projectileY < bombY) && (projectileX == bombX)) {
+    if (projectileLive && (projectileY < bombY) && (projectileX === bombX)) {
       sound.hit();
       info("Bullseye!");
       hitsThisLevel++;
       if(hitsThisLevel >= HITS_PER_LEVEL) {
-        if (level % 4 == 0)
+        if (level % 4 === 0)
           startBridgeLevel();
         level++;
         hitsThisLevel = 0;
@@ -366,7 +371,7 @@
         continue;
       }
       var keyColour = 'grey';
-      if (targetKeyIndex == i) {
+      if (targetKeyIndex === i) {
         keyColour = 'white';
       }
       colorText(keys[i], keyX, keyY, keyColour); // draw keys
