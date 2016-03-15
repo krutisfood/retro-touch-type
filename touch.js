@@ -23,6 +23,8 @@
   var indexOfNextBridgeChar = 0;
   const CHARS_IN_BRIDGE_LEVEL = 80;
   var paused = true;
+  var lastWpm = 0;
+  var framesPerSecond = 30;
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h',
@@ -49,7 +51,6 @@
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');
   
-    var framesPerSecond = 30;
     setInterval(updateAll, 1000/framesPerSecond);
   
     window.addEventListener('keydown', updateKeyPress, false);
@@ -116,7 +117,7 @@
   }
 
   function finishedBridgeLevel() {
-    info("Succeed!");
+    info("Succeed bridge level!");
     bridgeLevel = false;
     bridgeText = false;
     indexOfNextBridgeChar = 0;
@@ -132,7 +133,7 @@
       190 : '.'
     };
     var keypressedChar = keysNotMappingProperly[which] || String.fromCharCode(which).toLowerCase();
-    info("Key code " + which + " is " + keypressedChar);
+    debug("Key code " + which + " is " + keypressedChar);
     return keypressedChar;
   }
 
@@ -142,11 +143,11 @@
     } else {
       drawCanvas();
       if (paused) {
-	if (level === 1)
-          colorText('Start with your index fingers on \'f\' and \'j\'', 80, 140, 'white');
-        else
-          colorText('Words Per Minute: ', 180, 140, 'white');
-        drawPaused();
+	if (level === 1) {
+          colorText("Start with your index fingers on \'f\' and \'j\'", 80, 140, 'white');
+	} else {
+          colorText("You Type at " + lastWpm + " Words Per Minute", 180, 140, 'white');
+	} drawPaused();
       } else if (isBridgeLevel()) {
         moveAllBridge();
         drawAllBridge();
@@ -168,7 +169,8 @@
   function getBridgeText() {
     if (bridgeText) return bridgeText;
 
-    var total_text = "aaa ;;; sss lll ddd kkk fff jjj " +
+    var texts = [
+      "aaa ;;; sss lll ddd kkk fff jjj " +
       "aa ss dd ff aa ss dd ff " +
       ";; ll kk jj ;; ll kk jj " +
       "ad ad as as ask ask ad ad as as ask ask " +
@@ -188,8 +190,29 @@
       "lad; dad; sad; lass; lad; dad; sad; lass; " +
       "fad fad; ads ads; all all; fad ads all lads; " +
       "ask a lad; a fall ad; ask a dad; " +
-      "as a lad; as a dad; as a sad lass;  ";
+      "as a lad; as a dad; as a sad lass;  ",
 
+      "a;sldkfja;sldkfjaa;;ssllddkkffjj" +
+      "asadalljakfadfalllassasadalljakfadfalllass" +
+      "alad;adad;askadad;askalass;afallfad;" +
+      "jjjhhhjjjhhhjhjjhjjhjjhjaaahhhaaahhhahahhaha" +
+      "jhjhjhjhjhjhahahahahahahhadhadhasasashash" +
+      "ahahhaha;hadhadhasash;hashadahall;ashadahall;" +
+      "dddeeedddeeededdeddeddedelelledledeeleelekeeke" +
+      "edeedeedeedeleeleeleeleefedfedfedfedekeekeekeeke" +
+      "alake;alake;aleek;aleek;ajade;ajade;adeskadesk;" +
+      "he he she she shed shed heed heed held held he she shed heed held 11.he held a lash; she held a jade; he she held sash;" +
+      "he has fled; he has a sale; she has a sale; he as ash;" +
+      "ask ask has has lad lad all all fall falls" +
+      "a sash; had all; a fall jak; a lad sash;" +
+      "he he she she led led held held she she fell fell" +
+      "he he led led; she she had had; she she fell fell;" +
+      "a jade shelf; a jade desk shelf;; she had a shed;" +
+      "he sells desks; she sells desks; he sells jade;" +
+      "he led; she led; he as jade; she has jade;" +
+      "she asked a lad; he asked a lass; she fell; he fell;"]
+
+    var total_text = texts[0];
     var randy = Math.floor(Math.random() * (total_text.length - CHARS_IN_BRIDGE_LEVEL));
     debug("Returning text starting at " + randy);
     return total_text.substring(randy, randy + CHARS_IN_BRIDGE_LEVEL);
@@ -228,6 +251,14 @@
         bridgeText = getBridgeText().slice(0,-1);
       }
     }
+    // WPM = (chars typed / 5) / time
+    // Refresh is hard coded (ugh) to 30/sec
+
+    var elapsedMinutes = (bridgeLevelCounter / (framesPerSecond * 60));
+    lastWpm = Math.floor((indexOfNextBridgeChar / 5) / elapsedMinutes);
+    info("last WPM is set to " + lastWpm);
+    info("elapsedMinutes " + elapsedMinutes + ", indexOfNextBridgeChar " + indexOfNextBridgeChar);
+
     if (indexOfNextBridgeChar >= (CHARS_IN_BRIDGE_LEVEL - howManyBridgeLevelCharsEaten)) {
       finishedBridgeLevel();
     }
@@ -417,7 +448,7 @@
   }
 
   function underline(ctx, text, x, y, size, color, thickness ,offset) {
-    info("Underline invoked with " + text + ", " + x + ", " + y + ", " + size + ", " + color + ", " + thickness + ", " + offset + ", " + ctx.textAlign);
+    debug("Underline invoked with " + text + ", " + x + ", " + y + ", " + size + ", " + color + ", " + thickness + ", " + offset + ", " + ctx.textAlign);
     var width = ctx.measureText(text).width;
 
     switch(offset){
@@ -430,10 +461,10 @@
     }
 
     // y += size+offset;
-    info("Y is " + y + ", size is " + size);
+    debug("Y is " + y + ", size is " + size);
     y += size;
 
-    info("Drawing underline from " + x + ", " + y + " of length " + width);
+    debug("Drawing underline from " + x + ", " + y + " of length " + width);
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.lineWidth = thickness;
