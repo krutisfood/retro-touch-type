@@ -146,7 +146,7 @@
 	if (level === 1) {
           colorText("Start with your index fingers on \'f\' and \'j\'", 80, 140, 'white');
 	} else {
-          colorText("You Type at " + lastWpm + " Words Per Minute", 180, 140, 'white');
+          colorText("You typed at " + lastWpm + " words per minute", 140, 140, 'white');
 	} drawPaused();
       } else if (isBridgeLevel()) {
         moveAllBridge();
