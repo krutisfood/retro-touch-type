@@ -28,7 +28,7 @@
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h',
-      'e','i','r','u','w','o','x',',',
+      'e','i','r','u','w','o','x',',','q','p',
       '3','8','c','m','z','.','v','n','b','\/'];
 
   // This can be used to generate the keyMap

@@ -2,7 +2,10 @@
 
 A HTML5 + JS reproduction of a game I used to learn to touch type on an x086 in the mid 80s.
 
-Dedicated to my beautiful kids Kayla, Taj & Felix!
+Dedicated to my beautiful kids Kayla, Taj & Felix.
+
+_Note:_ Tested working in Firefox, Google Chrome.  NOT working in Safari or IE 11.
+
 
 # Play
 
