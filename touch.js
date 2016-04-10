@@ -1,5 +1,5 @@
 (function(touch){
-  'use strict';
+  // 'use strict';
 
   var canvas;
   var canvasContext;
@@ -25,6 +25,7 @@
   var paused = true;
   var lastWpm = 0;
   var framesPerSecond = 30;
+  var muted = false;
 
   // This is in order of which level they appear
   var keys = ['f','j','d','k','s','l','a',';','g','h',
@@ -109,7 +110,7 @@
   }
 
   function shootAt(key) {
-    sound.pewpew();
+    play(sound.pewpew);
     info("Getting co-ords for \'" + key + "\'.");
     projectileY = yForKey(key);
     projectileX = xForKey(key);
@@ -285,7 +286,7 @@
   function projectileBombHandling() {
     // projectile gets less going up, bomb gets more going down
     if (projectileLive && (projectileY < bombY) && (projectileX === bombX)) {
-      sound.hit();
+      play(sound.hit);
       info("Bullseye!");
       hitsThisLevel++;
       if(hitsThisLevel >= HITS_PER_LEVEL) {
@@ -323,7 +324,7 @@
       var targetKeyY = yForKey(targetKey);
       debug("For key " + targetKey + ", Is " + bombY + " >= " + targetKeyY);
       if (bombY >= targetKeyY) {
-        sound.destroyed();
+        play(sound.destroyed);
         debug("Letter destroyed!");
         livesLeft -= 1;
         bombsAway = false;
@@ -471,5 +472,16 @@
     ctx.moveTo(x,y);
     ctx.lineTo(x+width,y);
     ctx.stroke();
+  }
+
+  function play(sound) {
+    if(!muted) {
+      try {
+        sound();
+      } catch(err) {
+        // Better than figuring out which browser & assuming IE can't play sounds
+	debug("Sound failed with error " + err);
+      }
+    }
   }
 })(this.touch = {});
