@@ -4,7 +4,7 @@ A HTML5 + JS reproduction of a game I used to learn to touch type on an x086 in 
 
 Dedicated to my beautiful kids Kayla, Taj & Felix.
 
-_Note:_ Tested working in Firefox, Google Chrome.  NOT working in Safari or IE 11.
+_Note:_ For me this game works best in Google Chrome, then Firefox, it is now working in Safari and IE 11 though IE won't play sound.
 
 
 # Play

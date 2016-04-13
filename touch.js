@@ -57,6 +57,10 @@
     window.addEventListener('keydown', updateKeyPress, false);
   };
 
+  function error(message) {
+    console.log("ERROR: " + message);
+  }
+
   function info(message) {
     console.log("INFO: " + message);
   }
@@ -480,7 +484,7 @@
         sound();
       } catch(err) {
         // Better than figuring out which browser & assuming IE can't play sounds
-	debug("Sound failed with error " + err);
+	error("Sound failed with error " + err);
       }
     }
   }
