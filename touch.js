@@ -6,9 +6,9 @@
   var sound = jsfx.Live(library);
   var bridgeLevel = false;
   var livesLeft = 3;
-  var bombSpeed = 3;
-  var projectileSpeed = 8;
-  const HITS_PER_LEVEL = 4;
+  var bombSpeed = 4;
+  var projectileSpeed = 10;
+  const HITS_PER_LEVEL = 8;
   var bombY;
   var bombX;
   var projectileLive = false;
