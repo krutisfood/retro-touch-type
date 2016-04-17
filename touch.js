@@ -27,12 +27,13 @@
   var framesPerSecond = 30;
   var muted = false;
 
-  // This is in order of which level they appear
-  var keys = ['f','j','d','k','s','l','a',';','g','h',
-      'e','i','r','u','w','o','x',',','q','p',
-      '3','8','c','m','z','.','v','n','b','\/'];
+  // This defines the order in which keys appear
+  var keys = 'fjdksla;gh' +
+    'rueiwoqpty' +
+    'vmcmx,z.bn\/' +
+    '3847291056\[';
 
-  // This can be used to generate the keyMap
+  // This is used to generate where they appear on screen
   var keyboard = [['1','2','3','4','5','6','7','8','9','0','-','='],
         ['q','w','e','r','t','y','u','i','o','p','\[','\]','\\'],
         ['a','s','d','f','g','h','j','k','l',';','\''],
@@ -145,16 +146,14 @@
   function updateAll() {
     if (livesLeft <= 0) {
       gameOver();
+    } else if(noKeysInPlay() >= keys.length) {
+      error("Comparing " + noKeysInPlay() + " with " + keys.length);
+      playerWon();
     } else {
       drawCanvas();
       if (paused) {
 	if (level === 1) {
-          colorText("Place your index fingers on \'f\' and \'j\'", 80, 100, 'white');
-          colorText("Middle fingers on \'d\' and \'k\'", 80, 120, 'white');
-          colorText("Ring fingers on \'s\' and \'l\'", 80, 140, 'white');
-          colorText("Pinky fingers on \'a\' and \';\'", 80, 160, 'white');
-          colorText("This is the home row, this is where your fingers should", 80, 180, 'white');
-          colorText("return when they've finished typing a letter.", 80, 200, 'white');
+          drawIntroText();
 	} else {
           colorText("You typed at " + lastWpm + " words per minute", 140, 140, 'white');
 	} drawPaused();
@@ -166,6 +165,15 @@
         drawAll();
       }
     }
+  }
+
+  function drawIntroText() {
+    colorText("Place your index fingers on \'f\' and \'j\'", 80, 100, 'white');
+    colorText("Middle fingers on \'d\' and \'k\'", 80, 120, 'white');
+    colorText("Ring fingers on \'s\' and \'l\'", 80, 140, 'white');
+    colorText("Pinky fingers on \'a\' and \';\'", 80, 160, 'white');
+    colorText("Your fingers are now on the home row, bring your fingers", 80, 180, 'white');
+    colorText("back here when they've finished typing a letter.", 80, 200, 'white');
   }
 
   function drawPaused() {
@@ -284,8 +292,17 @@
     projectileLetterHandling();
   }
 
-  function gameOver() {
-    colorText('GAME OVER', 180, 160, 'white',40);
+  function playerWon() {
+    gameOver(true);
+  }
+
+  function gameOver(playerWon) {
+    if(playerWon) {
+      colorText('CONGRATULATIONS!', 120, 100, 'white',40);
+      colorText('YOU WON!!!', 180, 160, 'white',40);
+    } else {
+      colorText('GAME OVER', 180, 160, 'white',40);
+    }
     colorText('Refresh page to start again.', 170, 200, 'white');
     info("Game over");
     // paused = true;
