@@ -149,7 +149,12 @@
       drawCanvas();
       if (paused) {
 	if (level === 1) {
-          colorText("Start with your index fingers on \'f\' and \'j\'", 80, 140, 'white');
+          colorText("Place your index fingers on \'f\' and \'j\'", 80, 100, 'white');
+          colorText("Middle fingers on \'d\' and \'k\'", 80, 120, 'white');
+          colorText("Ring fingers on \'s\' and \'l\'", 80, 140, 'white');
+          colorText("Pinky fingers on \'a\' and \';\'", 80, 160, 'white');
+          colorText("This is the home row, this is where your fingers should", 80, 180, 'white');
+          colorText("return when they've finished typing a letter.", 80, 200, 'white');
 	} else {
           colorText("You typed at " + lastWpm + " words per minute", 140, 140, 'white');
 	} drawPaused();
