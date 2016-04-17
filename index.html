@@ -4,17 +4,32 @@
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
   <meta content="utf-8" http-equiv="encoding">
   <style>
-    canvas {
+    #game-canvas {
         padding: 0;
         margin: auto;
-        display: block;
         width: 960px;
         height: 600px;
+        display: block;
         position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
+    }
+    #low-res {
+      display:none;
+    }
+
+    @media (min-width: 0px) and (max-width: 959px), (max-height: 599px) {
+      body {
+        background-color: lightgreen;
+      }
+      #game-canvas {
+        display: none;
+      }
+      #low-res {
+        display: block;
+      }
     }
   </style>
   <title>Retro Learn Touch Typing Free</title>
@@ -46,11 +61,15 @@ var library = {
 var sfx = jsfx.Live(library);
 </script>
 
-<canvas id="gameCanvas" width="640" height="400"></canvas>
+<canvas id='game-canvas' width="640" height="400"></canvas>
+<div id='low-res'>
+  <p>Sorry, this game is designed for higher resolution devices.</p>
+  <p>If you're trying to play this game on a lower res device which has a keyboard, e.g. a convertible tablet, let me know and I'll see what I can do.</p>
+</div>
 <script src="touch.js"></script>
 <script>
   function load() {
-    touch.start();
+    touch.start(document.getElementById('game-canvas'));
   }
   window.onload = load;
 </script>

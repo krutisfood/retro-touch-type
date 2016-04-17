@@ -6,7 +6,7 @@
   var sound = jsfx.Live(library);
   var bridgeLevel = false;
   var livesLeft = 3;
-  var bombSpeed = 4;
+  var bombSpeed = 5;
   var projectileSpeed = 10;
   const HITS_PER_LEVEL = 8;
   var bombY;
@@ -48,9 +48,9 @@
   // Where they sit on the keyboard is generated
   var keyMap = {};
 
-  touch.start = function () {
+  touch.start = function (gameCanvas) {
     generateKeyMap();
-    canvas = document.getElementById('gameCanvas');
+    canvas = gameCanvas;
     canvasContext = canvas.getContext('2d');
   
     setInterval(updateAll, 1000/framesPerSecond);
@@ -237,14 +237,14 @@
   }
 
   function drawAllBridge() {
-    const CHARS_PER_LINE = 50;
+    const CHARS_PER_LINE = 60;
     const explosionSequence = ['\\','-','/','|','\\','-','/','|'];
     var trailingChar;
     var explosionIndex = Math.floor(bridgeLevelCounter / 3) % explosionSequence.length;
     trailingChar = explosionSequence[explosionIndex];
 
     bridgeText = getBridgeText();
-    var bridgeLines = bridgeText.concat(trailingChar).match(/.{1,50}/g);
+    var bridgeLines = bridgeText.concat(trailingChar).match(/.{1,60}/g);
     var lineY = 200;
     // This works because we're using a mono space font
     var width = canvasContext.measureText(bridgeText.charAt(indexOfNextBridgeChar)).width;
@@ -367,6 +367,7 @@
       targetKeyIndex = Math.floor(randy);
       bombsAway = true;
       var targetKey = keys[targetKeyIndex];
+      info('Dropping bomb, getting x for key ' + targetKey);
       bombX = xForKey(targetKey);
     } else {
       debug("Aiming at " + targetKeyIndex);
@@ -407,11 +408,12 @@
     if (sequenceIndex >= (explosionSequence.length - 1) * 3) {
       letterDestroyed = false;
       sequenceIndex = 0;
+    } else {
+      info('Drawing explosion, getting x for key ' + letterDestroyed);
+      var destroyedX = xForKey(letterDestroyed);
+      var destroyedY = yForKey(letterDestroyed);
+      colorText(explosionSequence[charToDraw], destroyedX, destroyedY, 'white');
     }
-
-    var destroyedX = xForKey(letterDestroyed);
-    var destroyedY = yForKey(letterDestroyed);
-    colorText(explosionSequence[charToDraw], destroyedX, destroyedY, 'white');
   }
 
   function noKeysInPlay() {
