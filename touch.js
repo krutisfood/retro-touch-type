@@ -28,10 +28,11 @@
   var muted = false;
 
   // This defines the order in which keys appear
-  var keys = 'fjdksla;gh' +
-    'rueiwoqpty' +
-    'vmcmx,z.bn\/' +
-    '3847291056\[';
+  var keys = 'fjdksla;' +
+    'ghrueiwo' +
+    'qptyvncm' +
+    'x,z.b\/38' +
+    '47291056\[';
 
   // This is used to generate where they appear on screen
   var keyboard = [['1','2','3','4','5','6','7','8','9','0','-','='],
@@ -52,9 +53,9 @@
     generateKeyMap();
     canvas = gameCanvas;
     canvasContext = canvas.getContext('2d');
-  
+
     setInterval(updateAll, 1000/framesPerSecond);
-  
+
     window.addEventListener('keydown', updateKeyPress, false);
   };
 
@@ -158,7 +159,7 @@
           colorText("You typed at " + lastWpm + " words per minute", 140, 140, 'white');
 	} drawPaused();
       } else if (isBridgeLevel()) {
-        moveAllBridge();
+        moveAllBridge(); // TODO this determines that bridge level is done but it continues on to draw...
         drawAllBridge();
       } else {
         moveAll();
@@ -185,6 +186,7 @@
   }
 
   function getBridgeText() {
+    debug("Get bridge text " + bridgeText);
     if (bridgeText) return bridgeText;
 
     var texts = [
@@ -208,18 +210,20 @@
       "lad; dad; sad; lass; lad; dad; sad; lass; " +
       "fad fad; ads ads; all all; fad ads all lads; " +
       "ask a lad; a fall ad; ask a dad; " +
-      "as a lad; as a dad; as a sad lass;  ",
+      "as a lad; as a dad; as a sad lass; ",
 
       "a;sldkfja;sldkfjaa;;ssllddkkffjj" +
-      "asadalljakfadfalllassasadalljakfadfalllass" +
-      "alad;adad;askadad;askalass;afallfad;" +
+      "ghrueiwo; how wow row aeiou grr grow" +
+      "ear rae low" +
+      "woeiru wood grue hi hello " +
       "jjjhhhjjjhhhjhjjhjjhjjhjaaahhhaaahhhahahhaha" +
       "jhjhjhjhjhjhahahahahahahhadhadhasasashash" +
       "ahahhaha;hadhadhasash;hashadahall;ashadahall;" +
       "dddeeedddeeededdeddeddedelelledledeeleelekeeke" +
       "edeedeedeedeleeleeleeleefedfedfedfedekeekeekeeke" +
       "alake;alake;aleek;aleek;ajade;ajade;adeskadesk;" +
-      "he he she she shed shed heed heed held held he she shed heed held 11.he held a lash; she held a jade; he she held sash;" +
+      "he he she she shed shed heed heed held held he she shed heed held" +
+      "he held a lash; she held a jade; he she held sash;" +
       "he has fled; he has a sale; she has a sale; he as ash;" +
       "ask ask has has lad lad all all fall falls" +
       "a sash; had all; a fall jak; a lad sash;" +
@@ -228,22 +232,35 @@
       "a jade shelf; a jade desk shelf;; she had a shed;" +
       "he sells desks; she sells desks; he sells jade;" +
       "he led; she led; he as jade; she has jade;" +
-      "she asked a lad; he asked a lass; she fell; he fell;"]
+      "she asked a lad; he asked a lass; she fell; he fell;" +
+      "hero great grate gate fate irate wool would",
 
-    var total_text = texts[0];
+      "quiet loop pool yes vet not come here yet yes" +
+      "quiet quell question queen more pool poor rope" ];
+
+/*  var keys = 'fjdksla;' +
+    'ghrueiwo' +
+    'qptyvncm' +
+    'x,z.b\/38' +
+    '47291056\[';
+   */
+
+    var textIndex = bridgeLevelIndex(texts.length, level);
+    var total_text = texts[textIndex];
     var randy = Math.floor(Math.random() * (total_text.length - CHARS_IN_BRIDGE_LEVEL));
     debug("Returning text starting at " + randy);
     return total_text.substring(randy, randy + CHARS_IN_BRIDGE_LEVEL);
   }
 
   function drawAllBridge() {
+    if (!bridgeLevel) return;
     const CHARS_PER_LINE = 60;
     const explosionSequence = ['\\','-','/','|','\\','-','/','|'];
     var trailingChar;
     var explosionIndex = Math.floor(bridgeLevelCounter / 3) % explosionSequence.length;
     trailingChar = explosionSequence[explosionIndex];
 
-    bridgeText = getBridgeText();
+    // bridgeText = getBridgeText();
     var bridgeLines = bridgeText.concat(trailingChar).match(/.{1,60}/g);
     var lineY = 200;
     // This works because we're using a mono space font
@@ -274,8 +291,8 @@
 
     var elapsedMinutes = (bridgeLevelCounter / (framesPerSecond * 60));
     lastWpm = Math.floor((indexOfNextBridgeChar / 5) / elapsedMinutes);
-    info("last WPM is set to " + lastWpm);
-    info("elapsedMinutes " + elapsedMinutes + ", indexOfNextBridgeChar " + indexOfNextBridgeChar);
+    debug("last WPM is set to " + lastWpm);
+    debug("elapsedMinutes " + elapsedMinutes + ", indexOfNextBridgeChar " + indexOfNextBridgeChar);
 
     if (indexOfNextBridgeChar >= (CHARS_IN_BRIDGE_LEVEL - howManyBridgeLevelCharsEaten)) {
       finishedBridgeLevel();
@@ -326,9 +343,18 @@
     }
   }
 
+  function bridgeLevelIndex(numberOfBridgeTexts, level) {
+    var index = (level / 4);
+    info("In looking for bridgeLevelIndex we've got index of " + index + ", level " + level);
+    if (index > numberOfBridgeTexts)
+      return numberOfBridgeTexts - 1;
+    return Math.floor(index) - 1;
+  }
+
   function startBridgeLevel() {
     info("Start bridge level after level " + level);
     bridgeLevel = true;
+    bridgeText = getBridgeText();
   }
 
   function moveProjectile() {
